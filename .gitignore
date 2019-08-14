@@ -40,3 +40,23 @@ m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
 autom4te.cache
+
+# additions
+
+*.core
+*.dSYM
+*.diff
+*.gcno
+*.lo
+*.la
+*.o
+*.a
+*.patch
+*~
+.deps/
+.libs/
+Makefile
+/config.log
+/config.status
+/libtool
+build-aux/
