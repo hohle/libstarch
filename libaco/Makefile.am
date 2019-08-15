@@ -1,3 +1,3 @@
-noinst_LIBRARIES = libaco.a
+noinst_LTLIBRARIES = libaco.la
 
-nodist_libaco_a_SOURCES = aco.c acosw.S
+nodist_libaco_la_SOURCES = aco.c acosw.S

@@ -23,6 +23,15 @@ AM_PROG_AR
 AM_PROG_AS
 LT_INIT
 
+if test "x$enable_code_coverage" = "xyes"; then
+    AC_CHECK_TOOL(HAS_LLVM_COV, llvm-cov, ":")
+    if test "x$HAS_LLVM_COV" != "x:"; then
+        GCOV="$PWD/llvm-gcov"
+    fi
+fi
+
+AX_CODE_COVERAGE
+
 PKG_CHECK_MODULES(CHECK, check >= 0.10.0)
 
 AC_HEADER_STDC
@@ -39,6 +48,7 @@ AC_CHECK_HEADERS([ \
     limits.h \
     stddef.h \
 ])
+AC_CHECK_HEADER_STDBOOL
 
 AC_CHECK_FUNCS([ \
     strdup \
@@ -51,10 +61,11 @@ AC_FUNC_MALLOC
 AC_FUNC_MMAP
 AC_FUNC_REALLOC
 AC_TYPE_SIZE_T
-AC_TYPE_UINT8_T
+AC_TYPE_SSIZE_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
+AC_TYPE_UINT8_T
 
 AC_ARG_ENABLE(debug,
               AC_HELP_STRING(--enable-debug, create a debug build),
@@ -117,4 +128,5 @@ AC_CONFIG_FILES([ \
     src/Makefile \
     test/Makefile \
 ])
+
 AC_OUTPUT

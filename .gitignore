@@ -43,20 +43,24 @@ autom4te.cache
 
 # additions
 
+*.a
 *.core
 *.dSYM
 *.diff
 *.gcno
-*.lo
 *.la
+*.lo
+*.log
 *.o
-*.a
 *.patch
+*.trs
 *~
 .deps/
 .libs/
-Makefile
 /config.log
 /config.status
 /libtool
-build-aux/
+/m4
+/build-aux
+core
+Makefile
