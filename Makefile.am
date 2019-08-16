@@ -1,6 +1,9 @@
 SUBDIRS = libaco src test
 
 ACLOCAL_AMFLAGS = -I m4
+EXTRA_DIST = include
+
+man1_MANS = man/libstarch.3
 
 SCAN_BUILD ?= scan-build80
 CLANG_ANALYZER_OUTPUT_DIR = $(top_builddir)/clang
@@ -12,9 +15,24 @@ scan-build: $(CLANG_ANALYZER_OUTPUT_DIR)
 	        -o "$(CLANG_ANALYZER_OUTPUT_DIR)" \
 	        -analyze-headers \
 	        $(MAKE) all
-	
 	if [ -n "$$(find $(CLANG_ANALYZER_OUTPUT_DIR) -name '*.html')" ]; then \
 	    echo "Issues found during static analysis." ; \
 	    echo "Look in $(CLANG_ANALYZER_OUTPUT_DIR) for more info." ; \
 	    exit 1 ; \
 	fi
+
+get-deps: get-deps-@PACKAGE_MANAGER@
+get-deps-macports:
+	sudo $(PACKAGE_MANAGER) update
+	sudo $(PACKAGE_MANAGER) install @DEPENDENCIES@
+get-deps-homebrew:
+	sudo brew install @DEPENDENCIES@
+get-deps-apt:
+	sudo apt-get update -qq
+	sudo apt-get -y install @DEPENDENCIES@
+get-deps-yum:
+	$(PACKAGE_MANAGER) -y install @DEPENDENCIES@
+get-deps-pkg:
+	$(PACKAGE_MANAGER) install -y @DEPENDENCIES@
+get-deps-unknown:
+	-echo "Please install @DEPENDENCIES@" 1>&2

@@ -1,17 +1,24 @@
-freebsd_instance:
-  image: freebsd-11-2-release-amd64
-
-osx_instance:
-  image: mojave-xcode-10.2
-
-container:
-  image: alpine:latest
 
 task:
-  install_script: make get-dep
-  make_script:
+  matrix:
+    - freebsd_instance:
+        image: freebsd-11-2-release-amd64
+      pre_install_script:
+        - pkg install -y libtoolize aclocal automake autoreconf gmake
+    - osx_instance:
+        image: mojave-xcode-10.2
+      pre_install_script:
+        - brew install -y libtoolize aclocal automake autoreconf gmake
+    - container:
+        image: alpine:latest
+      pre_install_script:
+        - apt-get install -y libtoolize aclocal automake autoreconf gmake
+
+  install_script:
     - ./autogen.sh
     - ./configure
+    - gmake get-deps
+  make_script:
     - gmake
   check_script: gmake check
   dist_check_script: gmake dist-check

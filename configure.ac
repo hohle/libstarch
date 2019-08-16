@@ -112,10 +112,20 @@ case "$host_os" in
     *darwin*)
         AC_MSG_RESULT(darwin)
         PLATFORM=darwin
+        AC_CHECK_PROG(found_macports, port, yes)
+        AC_CHECK_PROG(found_homebrew, brew, yes)
         ;;
     *linux*)
         AC_MSG_RESULT(linux)
         PLATFORM=linux
+        DEP_GMAKE=make
+        AC_CHECK_PROG(found_yum, yum, yes)
+        AC_CHECK_PROG(found_apt, apt, yes)
+        ;;
+    *freebsd*)
+        AC_MSG_RESULT(freebsd)
+        PLATFORM=freebsd
+        AC_CHECK_PROG(found_pkg, pkg, yes)
         ;;
     *)
         AC_MSG_RESULT(unknown)
@@ -125,7 +135,40 @@ esac
 AC_SUBST(PLATFORM)
 AM_CONDITIONAL(IS_DARWIN, test "x$PLATFORM" = xdarwin)
 AM_CONDITIONAL(IS_LINUX, test "x$PLATFORM" = xlinux)
+AM_CONDITIONAL(IS_FREEBSD, test "x$PLATFORM" = xfreebsd)
 AM_CONDITIONAL(IS_UNKNOWN, test "x$PLATFORM" = xunknown)
+
+DEP_ARCHIVE=libarchive
+DEP_GMAKE=gmake
+case "yes" in
+    "$found_macports")
+        PACKAGE_MANAGER=macports
+        ;;
+    "$found_homebrew")
+        PACKAGE_MANAGER=homebrew
+        ;;
+    "$found_macports")
+        PACKAGE_MANAGER=apt
+        DEP_CURL=libcurl-dev
+        DEP_UV=libuv-dev
+        DEP_JSONC=json-c-dev
+        ;;
+    "$found_yum")
+        PACKAGE_MANAGER=yum
+        ;;
+    "$found_apt")
+        PACKAGE_MANAGER=apt
+        ;;
+    "$found_pkg")
+        PACKAGE_MANAGER=pkg
+        ;;
+    *)
+        PACKAGE_MANAGER=unknown
+        ;;
+esac
+DEPENDENCIES="$DEP_ARCHIVE $DEP_GMAKE"
+AC_SUBST(PACKAGE_MANAGER)
+AC_SUBST(DEPENDENCIES)
 
 AC_CONFIG_FILES([ \
     Makefile \
