@@ -3,3 +3,8 @@
 `libuv`.
 
 Discussion: https://groups.google.com/forum/#!searchin/libarchive-discuss/non$20blocking|sort:date/libarchive-discuss/hujPq9XuRXc/dziw6ozntxgJ
+
+
+# Requirements
+
+`gmake` if `--enable-valgrind` is enabled

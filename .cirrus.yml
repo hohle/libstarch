@@ -12,9 +12,9 @@ task:
   make_script:
     - ./autogen.sh
     - ./configure
-    - make
-  check_script: make check
-  dist_check_script: make dist-check
+    - gmake
+  check_script: gmake check
+  dist_check_script: gmake dist-check
   artifacts:
     - libcheck-*.tar.gz
     - libcheck-*.tar.xz
