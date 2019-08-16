@@ -4,16 +4,18 @@ task:
     - freebsd_instance:
         image: freebsd-11-2-release-amd64
       pre_install_script:
-        - pkg install -y libtoolize aclocal automake autoreconf gmake
+        - pkg install -y libtool automake autoconf autoconf-archive gmake
     - osx_instance:
         image: mojave-xcode-10.2
       pre_install_script:
-        - brew install -y libtoolize aclocal automake autoreconf gmake
+        - brew install libtool automake autoconf
     - container:
         image: alpine:latest
       pre_install_script:
-        - apt-get install -y libtoolize aclocal automake autoreconf gmake
+        - apk add clang autoconf automake automake make libtool
 
+  env:
+      CC: clang
   install_script:
     - ./autogen.sh
     - ./configure
