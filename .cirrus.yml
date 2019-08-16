@@ -1,0 +1,20 @@
+freebsd_instance:
+  image: freebsd-11-2-release-amd64
+
+osx_instance:
+  image: mojave-xcode-10.2
+
+container:
+  image: alpine:latest
+
+task:
+  install_script: make get-dep
+  make_script:
+    - ./autogen.sh
+    - ./configure
+    - make
+  check_script: make check
+  dist_check_script: make dist-check
+  artifacts:
+    - libcheck-*.tar.gz
+    - libcheck-*.tar.xz

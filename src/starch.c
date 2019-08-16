@@ -1,4 +1,4 @@
-
+#include <assert.h>
 #include <starch.h>
 #include <aco.h>
 
@@ -35,14 +35,18 @@ struct StarchStream_ {
 };
 
 
-int starch_co_close(struct archive* a,
+archive_close_callback starch_co_close;
+
+int starch_co_close(__attribute__((unused)) struct archive* a,
                     void* client_data) {
     StarchStream* str = client_data;
     str->finished = true;
     return 0;
 }
 
-ssize_t starch_co_read(struct archive *a,
+archive_read_callback starch_co_read;
+
+ssize_t starch_co_read(__attribute__((unused)) struct archive *a,
                        void* client_data,
                        const void **buff) {
     StarchStream* str = client_data;
@@ -60,9 +64,13 @@ ssize_t starch_co_read(struct archive *a,
     str->buffer_size = 0;
 
     fprintf(stderr, "giving libarchive %zu bytes\n", size);
-    return size;
+
+    assert(size <= SSIZE_MAX);
+
+    return (ssize_t) size;
 }
 
+__attribute__((noreturn))
 void starch_co() {
     StarchStream* str = aco_get_arg();
 
@@ -96,9 +104,13 @@ void starch_co() {
                                             str->out,
                                             1 << 13);
             fprintf(stderr, "   = %zu bytes\n", len);
-            str->out_size = len;
-            if (len == 0) {
-                str->archive_mode = PRE_ENTRY;
+            if (len >= 0) {
+                str->out_size = (size_t) len;
+                if (len == 0) {
+                    str->archive_mode = PRE_ENTRY;
+                }
+            } else {
+                fprintf(stderr, "ack! %zu", len);
             }
             aco_yield();
         }
@@ -107,7 +119,7 @@ void starch_co() {
             archive_read_data_skip(str->archive);
         }
     }
-   
+
     aco_exit();
 }
 
@@ -183,7 +195,10 @@ ssize_t starch_read(StarchStream* str, uint8_t* buff, size_t len) {
     if (str->out_size > 0) {
         size_t ret = min(len, str->out_size);
         memcpy(buff, str->out, ret);
-        return ret;
+
+        assert(ret <= SSIZE_MAX);
+
+        return (ssize_t) ret;
     }
 
     fprintf(stderr, "> read\n");
@@ -196,7 +211,7 @@ ssize_t starch_read(StarchStream* str, uint8_t* buff, size_t len) {
         fprintf(stderr, "    = ERROR\n");
         return SA_E_ERROR; // need to call next entry firest
     }
-    
+
     if (str->archive_mode == PRE_DATA ||
         str->out_size <= 0) {
         fprintf(stderr, "    = UNDERFLOW\n");
@@ -204,9 +219,13 @@ ssize_t starch_read(StarchStream* str, uint8_t* buff, size_t len) {
     }
 
     if (str->out_size > 0) {
-        memcpy(buff, str->out, min(len, str->out_size)); // TODO: woefully inadequate
-        fprintf(stderr, "    = read %zu\n", min(len, str->out_size));
-        return min(len, str->out_size);
+        size_t ret = min(len, str->out_size);
+        memcpy(buff, str->out, ret); // TODO: woefully inadequate
+        fprintf(stderr, "    = read %zu\n", ret);
+
+        assert(ret <= SSIZE_MAX);
+
+        return (ssize_t) ret;
     }
 
     fprintf(stderr, "    = INTERNAL ERROR\n");

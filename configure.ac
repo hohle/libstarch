@@ -31,6 +31,11 @@ if test "x$enable_code_coverage" = "xyes"; then
 fi
 
 AX_CODE_COVERAGE
+AX_VALGRIND_DFLT([drd], [off])
+AX_VALGRIND_DFLT([helgrind], [off])
+AX_VALGRIND_DFLT([memcheck], [on])
+AX_VALGRIND_DFLT([sgcheck], [on])
+AX_VALGRIND_CHECK
 
 PKG_CHECK_MODULES(CHECK, check >= 0.10.0)
 
