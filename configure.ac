@@ -14,7 +14,7 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects dist-xz])
 
 AC_CANONICAL_HOST
 
-: ${CLFAGS=""}
+: ${CLFAGS="-I/usr/local/include -I/opt/local/include"}
 AC_LANG(C)
 AC_PROG_CC(clang llvm-gcc gcc)
 AC_PROG_CPP
@@ -30,14 +30,14 @@ if test "x$enable_code_coverage" = "xyes"; then
     fi
 fi
 
-AX_CODE_COVERAGE
-AX_VALGRIND_DFLT([drd], [off])
-AX_VALGRIND_DFLT([helgrind], [off])
-AX_VALGRIND_DFLT([memcheck], [on])
-AX_VALGRIND_DFLT([sgcheck], [on])
-AX_VALGRIND_CHECK
+#AX_CODE_COVERAGE
+#AX_VALGRIND_DFLT([drd], [off])
+#AX_VALGRIND_DFLT([helgrind], [off])
+#AX_VALGRIND_DFLT([memcheck], [on])
+#AX_VALGRIND_DFLT([sgcheck], [on])
+#AX_VALGRIND_CHECK
 
-PKG_CHECK_MODULES(CHECK, check >= 0.10.0)
+PKG_CHECK_MODULES([CHECK], [check >= 0.10.0])
 
 AC_HEADER_STDC
 AC_CHECK_HEADERS([ \
