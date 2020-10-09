@@ -2,13 +2,23 @@
 task:
   matrix:
     - freebsd_instance:
-        image: freebsd-11-2-release-amd64
+        image_family: freebsd-12-1
       pre_install_script:
         - pkg install -y libtool automake autoconf autoconf-archive gmake check pkgconfig libarchive
+        - printf "#include <stdio.h>\nint main() { printf(\"hello-world\\\\n\"); return 0; }\n" > hello-world.c
+        - clang -o hello-world hello-world.c
+        - ./hello-world
     - osx_instance:
-        image: mojave-xcode-10.2
+        image: catalina-xcode-12.0
       pre_install_script:
         - brew install libtool automake autoconf autoconf-archive check make pkgconfig libarchive
+        - printf "#include <stdio.h>\nint main() { printf(\"hello-world\\\\n\"); return 0; }\n" > hello-world.c
+        - clang -o hello-world hello-world.c
+        - ./hello-world
+      env:
+        LDFLAGS: "-L/usr/local/opt/libarchive/lib"
+        CPPFLAGS: "-I/usr/local/opt/libarchive/include"
+        PKG_CONFIG_PATH: "/usr/local/opt/libarchive/lib/pkgconfig"
     - container:
         image: alpine:latest
       pre_install_script:
@@ -31,3 +41,7 @@ task:
   artifacts:
     - libcheck-*.tar.gz
     - libcheck-*.tar.xz
+  always:
+    test_artifacts:
+      path: "test/*.log"
+      type: text/plain

@@ -1,7 +1,7 @@
 libstarch
 =========
 
-[![Build Status](https://api.cirrus-ci.com/github/hohle/starch.svg)](https://cirrus-ci.com/github/hohle/starch)
+[![Build Status](https://api.cirrus-ci.com/github/hohle/libstarch.svg)](https://cirrus-ci.com/github/hohle/libstarch)
 
 
 `starch` is short for "Stream Archiver". It's a lightweight wrapper about
@@ -13,4 +13,7 @@ Discussion: https://groups.google.com/forum/#!searchin/libarchive-discuss/non$20
 
 # Requirements
 
-`gmake` if `--enable-valgrind` is enabled
+* `gmake`
+* if `--enable-valgrind` is enabled, valgrind
+* `libarchive`
+* A C17 compatible compiler (preferrablly `clang(1)`.

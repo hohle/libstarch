@@ -64,3 +64,4 @@ autom4te.cache
 /build-aux
 core
 Makefile
+/test/check_tar_gz
